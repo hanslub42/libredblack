@@ -42,13 +42,15 @@ def include(file, fpout):
     except IOError:
         error("missing skeleton file %s!" % file)
 
+        
 def redblack(filename, lines):
+    global rb_type, rb_cmp, rb_alloc, rb_free, rb_access, rb_prefix
     rb_type = rb_cmp = rb_alloc = rb_free = rb_access = None
     rb_prefix = "rb"
     sbrk = static = 0
     global lineno
 
-    ext = string.find(filename, ".rb")
+    ext = filename.find(".rb")
     if ext == -1:
         sys.stderr.write("redblack: extension on %s doesn't look right.\n" % filename)
         raise SyntaxError
@@ -72,13 +74,13 @@ def redblack(filename, lines):
                 lineno = lineno + 1
                 if not line:
                     break
-                comment = string.find(line, "//")
+                comment = line.find("//")
                 if comment > -1:
                     line = line[:comment] + "\n"
                 if line[0] == "\n":
                     continue
                 elif startswith(line, "%%rbgen"):
-		    fpout.write("#define RB_CUSTOMIZE\n")
+                    fpout.write("#define RB_CUSTOMIZE\n")
                     if not rb_type:
                         error("%type directive is required.")
                     else:
@@ -111,13 +113,14 @@ def redblack(filename, lines):
                     include(c_skel, fpout)
                     fpout.write("/* rbgen generated code ends here */\n")
                     if lines:
-                        fpout.write('#line %d "%s"\n' % (lineno, filename))
+                        fpout.write('#line %d "%s"\n' % (lineno, filename)) # cf https://stackoverflow.com/questions/15086040/behavior-of-exec-function-in-python-2-and-python-3
                     fpout.write(fpin.read())
                     return
                 elif line[0] == "%":
-                    tokens = string.split(line)
+                    tokens = line.split()
                     if tokens[0] in("%type","%cmp","%alloc","%free","%prefix"):
-                        exec "rb_" + tokens[0][1:] + " = '" + tokens[1] + "'"
+                        print("rb_" + tokens[0][1:] + " = '" + tokens[1] + "'")
+                        exec("rb_" + tokens[0][1:] + " = '" + tokens[1] + "'", globals())
                     elif tokens[0] == "%access":
                         if tokens[1] in ("inline", "pointer"):
                             rb_access = tokens[1]
@@ -153,9 +156,9 @@ if __name__ == "__main__":
     lines = 1;
     skelpath = [".", "@prefix@/share/@PACKAGE@" "/share/redblack"]
     for (switch, val) in options:
-	if (switch == '-l'):
-	    lines = 0
-	elif (switch == '-S'):
+        if (switch == '-l'):
+            lines = 0
+        elif (switch == '-S'):
             skeldir = val
 
     for skeldir in skelpath:
@@ -169,9 +172,9 @@ if __name__ == "__main__":
     for file in arguments:
         try:
             redblack(file, lines)
-            raise SystemExit, 0
+            raise SystemExit(0)
         except SyntaxError:
-            raise SystemExit, 1
+            raise SystemExit(1)
         
 # The following sets edit modes for GNU EMACS
 # Local Variables:
