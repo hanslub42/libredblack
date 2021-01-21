@@ -1,5 +1,5 @@
 %define name libredblack
-%define ver 1.3
+%define ver 1.4
 %define RELEASE 1
 %define rel %{?CUSTOM_RELEASE} %{!?CUSTOM_RELEASE:%RELEASE}
 
