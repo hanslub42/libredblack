@@ -3,7 +3,7 @@
 Copy of Damian Ivereigh's RedBlack Balanced Tree Searching and Sorting
 Library - http://libredblack.sourceforge.net/ After 20 years its bits
 have rotten somewhat. As it is an essential part of
-link:https://github.com/hanslub42/rlwrap[rlwrap] it is kept up-to-date
+[rlwrap](https://github.com/hanslub42/rlwrap) it is kept up-to-date
 by the rlwrap maintainer.
 
 
@@ -12,7 +12,7 @@ by the rlwrap maintainer.
 
 A kind of binary trees that are guaranteed to not become too
 unbalanced.  Search, insertion and deletion are O(log(n)). See
-link:https://en.wikipedia.org/wiki/Red%E2%80%93black_tree[Wikipedia].
+[Wikipedia](https://en.wikipedia.org/wiki/Red%E2%80%93black_tree).
 This package implements `rbgen`, a simple kind of code generator that
 emits C-code specialized for an user-specified data type.
 
