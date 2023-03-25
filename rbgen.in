@@ -154,7 +154,7 @@ if __name__ == "__main__":
     import getopt
     (options, arguments) = getopt.getopt(sys.argv[1:], "lS:")
     lines = 1;
-    skelpath = [".", "@prefix@/share/@PACKAGE@" "/share/redblack"]
+    skelpath = [".", "@prefix@/share/@PACKAGE@", "/share/redblack"]
     for (switch, val) in options:
         if (switch == '-l'):
             lines = 0
