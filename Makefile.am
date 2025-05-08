@@ -52,11 +52,8 @@ release:
 	rm -f index.html
 
 example4.c: example4.rb
-	## Create a dummy example4.c in case rbgen isn't present
-	echo 'int main() { return(0); }' > example4.c
-if USE_RBGEN
 	./rbgen $<
-endif
+
 
 writelock:
 	chmod a-w $(HEADERS) $(SOURCES) $(MANS) \

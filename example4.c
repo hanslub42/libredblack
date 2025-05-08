@@ -28,7 +28,7 @@ int compare(const price_t *s1, const price_t *s2)
 
 // These are the redblack directives
 /* rbgen generated code begins here */
-/* rbgen: $Id: rbgen.in,v 1.3 2003/10/24 01:31:21 damo Exp $ */
+/* About rbgen see: https://github.com/hanslub42/libredblack  */
 #define RB_CUSTOMIZE
 #define exdata_t price_t
 #define RB_CMP(s, t) compare(s, t)
