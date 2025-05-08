@@ -1,4 +1,3 @@
-static char rcsid[]="$Id: redblack.c,v 1.9 2003/10/24 01:31:21 damo Exp $";
 
 /*
    Redblack balanced tree algorithm
@@ -140,9 +139,6 @@ RB_STATIC struct RB_ENTRY(tree) *RB_ENTRY(init)(void)
 #endif /* RB_CUSTOMIZE */
 {
 	struct RB_ENTRY(tree) *retval;
-	char c;
-
-	c=rcsid[0]; /* This does nothing but shutup the -Wall */
 
 	if ((retval=(struct RB_ENTRY(tree) *) malloc(sizeof(struct RB_ENTRY(tree))))==NULL)
 		return(NULL);

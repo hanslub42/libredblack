@@ -36,15 +36,20 @@ def error(msg, warning=0):
 def startswith(line, prefix):
     return line[:len(prefix)] == prefix
 
-def include(file, fpout):
+
+def try_open(file, mode, extra_info = ""):
     try:
-        fp = open(file)
-        fpout.write(fp.read())
-        fp.close()
-    except IOError:
-        error("missing skeleton file %s!" % file)
+        return open(file, mode)
+    except (FileNotFoundError, PermissionError) as e:
+        sys.stderr.write("%s error %s  %s\n" % ("write" if mode == "w" else "read", extra_info, e))
+        raise SystemExit(1)
 
 
+def include(file, fpout):
+    fp = try_open(file,"r", "opening skeleton file")
+    fpout.write(fp.read())
+    fp.close()
+    
 def outfile_name(filename):
     ext = filename.find(".rb")
     if ext == -1:
@@ -53,13 +58,6 @@ def outfile_name(filename):
     else:
         outfile = filename[:ext] + ".c"
     return outfile
-
-def try_open(file, mode):
-    try:
-        return open(file, mode)
-    except (FileNotFoundError, PermissionError) as e:
-        sys.stderr.write("%s error %s\n" % ("write" if mode == "w" else "read", e))
-        raise SyntaxError
 
 def redblack(filename, lines):
     global rb_type, rb_cmp, rb_alloc, rb_free, rb_access, rb_prefix
@@ -126,14 +124,14 @@ def redblack(filename, lines):
                     include(c_skel, fpout)
                     fpout.write("/* rbgen generated code ends here */\n")
                     if lines:
-                        fpout.write('#line %d "%s"\n' % (lineno, filename)) # cf https://stackoverflow.com/questions/15086040/behavior-of-exec-function-in-python-2-and-python-3
+                        fpout.write('#line %d "%s"\n' % (lineno, filename)) 
                     fpout.write(fpin.read())
                     return
                 elif line[0] == "%":
                     tokens = line.split()
                     if tokens[0] in("%type","%cmp","%alloc","%free","%prefix"):
                         print("rb_" + tokens[0][1:] + " = '" + tokens[1] + "'")
-                        exec("rb_" + tokens[0][1:] + " = '" + tokens[1] + "'", globals())
+                        exec("rb_" + tokens[0][1:] + " = '" + tokens[1] + "'", globals()) # cf https://stackoverflow.com/questions/15086040/behavior-of-exec-function-in-python-2-and-python-3
                     elif tokens[0] == "%access":
                         if tokens[1] in ("inline", "pointer"):
                             rb_access = tokens[1]
@@ -167,7 +165,7 @@ if __name__ == "__main__":
     import getopt
     (options, arguments) = getopt.getopt(sys.argv[1:], "lS:")
     lines = 1;
-    skelpath = [".", "@prefix@/share/@PACKAGE@" "/share/redblack"]
+    skelpath = [".", "@prefix@/share/@PACKAGE@", "/share/redblack"]
     for (switch, val) in options:
         if (switch == '-l'):
             lines = 0
@@ -180,7 +178,8 @@ if __name__ == "__main__":
         if os.path.exists(h_skel) and os.path.exists(c_skel):
             break
     else:
-        sys.stderr.write("rbgen: can't find skeleton file\n")
+        sys.stderr.write("rbgen: can't find skeleton files redblack.{c,h} in %s\n" % (" or ".join(skelpath)))
+        raise SystemExit(1)
 
     for file in arguments:
         try:
